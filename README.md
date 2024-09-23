@@ -8,8 +8,8 @@ Google Dorks or Dorking, also known as Google Hacking, is a technique that consi
 
 ## Summary of the Dorks implemented in this tool
 - File type (filetype:)  
-  Searches for a specific type of file in the results.  
-  Example: `filetype:pdf` finds PDF files.
+    Searches for a specific type of file in the results.  
+    Example: `filetype:pdf` finds PDF files.
 
 - Exact match ("")  
   Searches for pages that contain the exact text within the quotes.  
