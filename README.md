@@ -7,70 +7,70 @@ This simple tool programmed in HTML allows you to use the potential of Google Do
 Google Dorks or Dorking, also known as Google Hacking, is a technique that consists of applying Google's advanced search to find specific information on the Internet by filtering the results with operators known as Dorks, which are symbols that specify a condition. For example, if we put double quotes (“text”) in our search text, it will search for information that exactly matches the text. That is, if we search for “OSI”, it will return the content that exactly matches that term. Throughout this article we will show you how it can be useful to you.
 
 ## Summary of the Dorks implemented in this tool
-- Tipo de archivo (filetype:)
-Busca un tipo específico de archivo en los resultados.
-Ejemplo: filetype:pdf encuentra archivos PDF.
+- File type (filetype:)  
+  Searches for a specific type of file in the results.  
+  Example: `filetype:pdf` finds PDF files.
 
-- Coincidencia exacta ("")
-Busca páginas que contengan el texto exacto dentro de las comillas.
-Ejemplo: "texto exacto" busca la frase exacta en las páginas.
+- Exact match ("")  
+  Searches for pages that contain the exact text within the quotes.  
+  Example: `"exact text"` searches for the exact phrase on pages.
 
-- Dominio (site:)
-Limita los resultados a un dominio o sitio web específico.
-Ejemplo: site:example.com busca solo en example.com.
+- Domain (site:)  
+  Limits results to a specific domain or website.  
+  Example: `site:example.com` searches only in example.com.
 
-- Título contiene (intitle:)
-Busca páginas donde el título contenga palabras específicas.
-Ejemplo: intitle:texto del título busca páginas con "texto del título" en su título.
+- Title contains (intitle:)  
+  Searches for pages where the title contains specific words.  
+  Example: `intitle:title text` searches for pages with "title text" in their title.
 
-- URL contiene (inurl:)
-Busca páginas donde la URL contenga palabras específicas.
-Ejemplo: inurl:texto en URL encuentra URLs que contengan "texto en URL".
+- URL contains (inurl:)  
+  Searches for pages where the URL contains specific words.  
+  Example: `inurl:text in URL` finds URLs that contain "text in URL".
 
-- Texto (intext:)
-Busca páginas que contengan texto específico en el cuerpo.
-Ejemplo: intext:texto en el cuerpo busca páginas con ese texto en su contenido.
+- Text (intext:)  
+  Searches for pages that contain specific text in the body.  
+  Example: `intext:text in body` searches for pages with that text in their content.
 
-- Versión en cache (cache:)
-Muestra la versión en caché de una página web almacenada por Google.
-Ejemplo: cache:example.com muestra la copia guardada de example.com.
+- Cache version (cache:)  
+  Displays the cached version of a webpage stored by Google.  
+  Example: `cache:example.com` shows the saved copy of example.com.
 
-- Contiene enlaces a (link:)
-Busca páginas que enlacen a un sitio o URL específico.
-Ejemplo: link:example.com muestra sitios que contienen enlaces a example.com.
+- Contains links to (link:)  
+  Searches for pages that link to a specific site or URL.  
+  Example: `link:example.com` shows sites that contain links to example.com.
 
-- Sitios relacionados con (related:)
-Encuentra sitios web relacionados con un dominio específico.
-Ejemplo: related:example.com muestra sitios similares a example.com.
+- Related sites (related:)  
+  Finds websites related to a specific domain.  
+  Example: `related:example.com` shows sites similar to example.com.
 
-- Todo en URL (allinurl:)
-Busca páginas donde la URL contenga todas las palabras especificadas.
-Ejemplo: allinurl:texto en URL busca URLs que contengan todas esas palabras.
+- All in URL (allinurl:)  
+  Searches for pages where the URL contains all specified words.  
+  Example: `allinurl:text in URL` searches for URLs that contain all those words.
 
-- Todo en título (allintitle:)
-Busca páginas cuyo título contenga todas las palabras especificadas.
-Ejemplo: allintitle:texto del título busca páginas con todas esas palabras en su título.
+- All in title (allintitle:)  
+  Searches for pages whose title contains all specified words.  
+  Example: `allintitle:title text` searches for pages with all those words in their title.
 
-- Todo en texto (allintext:)
-Busca páginas cuyo cuerpo contenga todas las palabras especificadas.
-Ejemplo: allintext:texto en el cuerpo busca páginas con todas esas palabras en su contenido.
+- All in text (allintext:)  
+  Searches for pages whose body contains all specified words.  
+  Example: `allintext:text in body` searches for pages with all those words in their content.
 
-- Definir (define:)
-Busca definiciones de términos directamente en Google.
-Ejemplo: define:ejemplo muestra la definición de "ejemplo".
+- Define (define:)  
+  Searches for definitions of terms directly in Google.  
+  Example: `define:example` shows the definition of "example".
 
-- Información (info:)
-Muestra información sobre un sitio web específico.
-Ejemplo: info:example.com muestra detalles sobre example.com.
+- Info (info:)  
+  Displays information about a specific website.  
+  Example: `info:example.com` shows details about example.com.
 
-- Excluir dominio (-site:)
-Excluye resultados de un dominio o sitio específico.
-Ejemplo: -site:example.com excluye páginas de example.com.
+- Exclude domain (-site:)  
+  Excludes results from a specific domain or site.  
+  Example: `-site:example.com` excludes pages from example.com.
 
-- Antes (before:)
-Limita los resultados a páginas publicadas antes de una fecha específica.
-Ejemplo: before:01/01/2023 busca páginas anteriores a esa fecha.
+- Before (before:)  
+  Limits results to pages published before a specific date.  
+  Example: `before:01/01/2023` searches for pages prior to that date.
 
-- Después (after:)
-Limita los resultados a páginas publicadas después de una fecha específica.
-Ejemplo: after:01/01/2023 busca páginas posteriores a esa fecha.
+- After (after:)  
+  Limits results to pages published after a specific date.  
+  Example: `after:01/01/2023` searches for pages after that date.
