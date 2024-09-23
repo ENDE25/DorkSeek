@@ -1,6 +1,8 @@
 # DorkSeek
 Graphical Google Dorks browser tool for Google.
 
+Link to the tool: https://ende25.github.io/DorkSeek/
+
 This simple tool programmed in HTML allows you to use the potential of Google Dorks for OSINT and advanced internet navigation through a simple graphical interface, freeing you from having to retain all the commands in your memory.
 
 ### What is Google Dorks?
