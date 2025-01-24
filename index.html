@@ -179,9 +179,16 @@
                 <label for="afterFilter">Después (after:)</label>
                 <input id="afterFilter" type="date" class="form-control" placeholder="Ej: '2022-01-01'" title="Limita los resultados a páginas publicadas después de una fecha específica.">
             </div>
+            <div style="height: 20px;"></div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="excludeAI" title="Advertencia: Marcar esta casilla puede ocultar resultados reelevantes para la búsqueda">
+                <label class="form-check-label" for="excludeAI">
+                    Excluir contenidos generados por IA
+                </label>
+            </div>
         </div>
         
-        <div class="row mt-5 justify-content-center">
+        <div class="row mt-4 justify-content-center">
             <button id="searchButton" class="btn btn-primary">Buscar en Google</button>
         </div>
 
@@ -264,6 +271,9 @@
             }
             if (exactMatch) {
                 searchQuery += ` "${exactMatch}"`;
+            }
+            if (document.getElementById('excludeAI').checked) {
+                searchQuery += ' -site:chat.openai.com -chatgpt -openai -copilot -bard -ai -generated -inurl:ai -inurl:generated';
             }
         
             // Redirigir a Google con la búsqueda construida
