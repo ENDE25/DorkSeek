@@ -79,3 +79,6 @@ Google Dorks or Dorking, also known as Google Hacking, is a technique that consi
 - **After (after:)**  
   Limits results to pages published after a specific date.  
   Example: `after:01/01/2023` searches for pages after that date.
+
+- **_Exclude IA generated results option_**  
+  Checking the box will exclude some typical terms found in AI-generated content.
