@@ -5,7 +5,8 @@ _Link to the tool_: https://ende25.github.io/DorkSeek/
 
 This simple tool programmed in HTML and JavaScript allows you to use the potential of Google Dorks for OSINT and advanced internet navigation through a simple graphical interface, freeing you from having to retain all the commands in your memory.
 
-![Sin etítulo-2](https://github.com/user-attachments/assets/99cbc24a-59ec-41f0-8e39-f7756ffbc81b)
+![imagen](https://github.com/user-attachments/assets/5fefd9dd-7518-484d-be6f-dbeabaf15c63)
+
 
 ### What is Google Dorks?
 Google Dorks or Dorking, also known as Google Hacking, is a technique that consists of applying Google's advanced search to find specific information on the Internet by filtering the results with operators known as Dorks, which are symbols that specify a condition. For example, if we put double quotes (“text”) in our search text, it will search for information that exactly matches the text. That is, if we search for “OSI”, it will return the content that exactly matches that term.
