@@ -6,91 +6,17 @@
     <meta name="description" content="DorkSeek - A powerful tool for advanced Google Dork usage in OSINT, designed to optimize the creation of custom search queries and analysis of results.">
     <meta name="robots" content="index, follow">
     <meta name="keywords" content="Google Dorks, búsqueda avanzada, operadores de búsqueda, hacking ético, seguridad informática, OSINT, ciberseguridad, técnicas de hacking, Google Hacking Database, comandos de Google Dorks">
-    <link rel="icon" type="image/x-icon" href="fv.ico">
-    <link rel="shortcut icon" href="fv.ico">
+    <link rel="icon" type="image/x-icon" href="img/fv.ico">
+    <link rel="shortcut icon" href="img/fv.ico">
     <title>DorkSeek</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <style>
-        :root {
-            --primary: #2B8DFF;
-            --background: #F8FAFF;
-            --text-primary: #1A1D24;
-            --text-secondary: #6B7280;
-        }
-        
-        body {
-          font-family: Arial, sans-serif;
-          background-color: #f9f9f9;
-        }
-
-        #searchBar {
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 0.7rem 1.5rem;
-            border-radius: 12px;
-            border: 2px solid #E5E7EB;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        #searchBar:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(43, 141, 255, 0.15);
-            outline: none;
-        }
-
-        .form-control {
-            border: 2px solid #E5E7EB;
-            border-radius: 8px;
-            padding: 0.50rem 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-control:focus {
-            border-color: var(--primary);
-            box-shadow: none;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            border: none;
-            padding: 0.55rem 2rem;
-            border-radius: 8px;
-            font-weight: 500;
-            letter-spacing: 0.02em;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            background: #1B6ACC;
-        }
-        
-        h1 {
-          font-family: 'Product Sans', Arial, sans-serif;
-          font-size: 0px;           /*a 45 sale el título*/
-          margin-bottom: 10px;
-          color: #333;
-        }
-      </style>
-      <style>
-        body {
-          background-color: #FFFFFF; /* o simplemente "white" */
-        }
-      </style>
-      <style>
-        #searchBar {
-          width: 600px; /* ajusta el ancho del cuadro de búsqueda */
-        }
-      </style>
-
+    <link rel="stylesheet" href="style.css">
     <meta name="google-site-verification" content="KBBp8snCi14scIXK39u9ytrFKHahNvsQoX6dvnZJ_Ps" />
 </head>
 <body>
     <div class="container">
         <div style="height: 20px;"></div>
-        <img src="DorkSeek_Logo.jpg" alt="Logo de Google" class="logo" width="690" height="100" style="display: block; margin: 30px auto;">
+        <img src="img/DorkSeek_Logo.jpg" alt="Logo de Google" class="logo" width="690" height="100" style="display: block; margin: 30px auto;">
         <h1 class="text-center my-0">Buscador Google Dorks</h1>
         <div class="row justify-content-center">
             <input id="searchBar" type="text" class="form-control" placeholder="Introduce tu búsqueda">
@@ -237,11 +163,19 @@
                 <input id="afterFilter" type="date" class="form-control" placeholder="Ej: '2022-01-01'" title="Limita los resultados a páginas publicadas después de una fecha específica.">
             </div>
             <div style="height: 20px;"></div>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="excludeAI" title="Advertencia: Marcar esta casilla puede ocultar resultados reelevantes para la búsqueda">
-                <label class="form-check-label" for="excludeAI">
-                    Excluir contenidos generados por IA
-                </label>
+            <div class="form-check d-flex align-items-center justify-content-between">
+                <div>
+                    <input class="form-check-input" type="checkbox" id="excludeAI" title="Advertencia: Marcar esta casilla puede ocultar resultados reelevantes para la búsqueda">
+                    <label class="form-check-label" for="excludeAI">
+                        Excluir contenidos generados por IA
+                    </label>
+                </div>
+                <div class="form-check form-switch">
+                    <label class="form-check-label me-2" for="toggle_dark" id="dark_text">Dark Mode</label>
+                    <input class="form-check-input" type="checkbox" role="switch" id="toggle_dark">
+                </div>
+                  
+                
             </div>
         </div>
         
@@ -250,127 +184,9 @@
         </div>
 
         <p style="font-style: italic; color: #868686; font-size: 0.6em; text-align: center; margin-top: 15px;">by ENDE</p>
-        
-        
     </div>
 
-    <script>
-        document.getElementById('searchButton').addEventListener('click', function() {
-            let query = document.getElementById('searchBar').value;
-            let site = document.getElementById('siteFilter').value;
-            let intitle = document.getElementById('intitleFilter').value;
-            let inurl = document.getElementById('inurlFilter').value;
-            let filetype = document.getElementById('filetypeFilter').value;
-            let intext = document.getElementById('intextFilter').value;
-            let cache = document.getElementById('cacheFilter').value;
-            let link = document.getElementById('linkFilter').value;
-            let related = document.getElementById('relatedFilter').value;
-            let allinurl = document.getElementById('allinurlFilter').value;
-            let allintitle = document.getElementById('allintitleFilter').value;
-            let allintext = document.getElementById('allintextFilter').value;
-            let define = document.getElementById('defineFilter').value;
-            let info = document.getElementById('infoFilter').value;
-            let before = document.getElementById('beforeFilter').value;
-            let after = document.getElementById('afterFilter').value;
-            let siteExclude = document.getElementById('siteExcludeFilter').value;
-            let exactMatch = document.getElementById('exactMatchFilter').value;
-        
-            // Construir la búsqueda usando los filtros de Google Dorks
-            let searchQuery = query;
-        
-            if (site) {
-                searchQuery += ` site:${site}`;
-            }
-            if (intitle) {
-                searchQuery += ` intitle:${intitle}`;
-            }
-            if (inurl) {
-                searchQuery += ` inurl:${inurl}`;
-            }
-            if (filetype) {
-                searchQuery += ` filetype:${filetype}`;
-            }
-            if (intext) {
-                searchQuery += ` intext:${intext}`;
-            }
-            if (cache) {
-                searchQuery += ` cache:${cache}`;
-            }
-            if (link) {
-                searchQuery += ` link:${link}`;
-            }
-            if (related) {
-                searchQuery += ` related:${related}`;
-            }
-            if (allinurl) {
-                searchQuery += ` allinurl:${allinurl}`;
-            }
-            if (allintitle) {
-                searchQuery += ` allintitle:${allintitle}`;
-            }
-            if (allintext) {
-                searchQuery += ` allintext:${allintext}`;
-            }
-            if (define) {
-                searchQuery += ` define:${define}`;
-            }
-            if (info) {
-                searchQuery += ` info:${info}`;
-            }
-            if (before) {
-                searchQuery += ` before:${before}`;
-            }
-            if (after) {
-                searchQuery += ` after:${after}`;
-            }
-            if (siteExclude) {
-                searchQuery += ` -site:${siteExclude}`;
-            }
-            if (exactMatch) {
-                searchQuery += ` "${exactMatch}"`;
-            }
-            if (document.getElementById('excludeAI').checked) {
-                searchQuery += ' -site:chat.openai.com -chatgpt -openai -copilot -bard -ai -generated -inurl:ai -inurl:generated';
-            }
-        
-            // Redirigir a Google con la búsqueda construida
-            window.open(`https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`, '_blank');
-        });
-    </script>
-
-<script>
-    document.getElementById('filetypeFilter').addEventListener('change', function() {
-        var customField = document.getElementById('filetypeCustom');
-        if (this.value === 'custom') {
-            customField.style.display = 'block';
-        } else {
-            customField.style.display = 'none';
-        }
-    });
-</script>
-
-<script>
-    // Borrar filtros
-    const clearFiltersButton = document.getElementById('clearFiltersButton');
-    clearFiltersButton.addEventListener('click', clearFilters);
-
-    function clearFilters() {
-    // Limpiamos los valores de los filtros
-    const filters = document.querySelectorAll('.form-control');
-    filters.forEach(filter => {
-        filter.value = '';
-    });
-
-    // Limpiamos los contenedores de valores
-    const valuesContainers = document.querySelectorAll('.values-container');
-    valuesContainers.forEach(container => {
-        while (container.firstChild) {
-        container.removeChild(container.firstChild);
-        }
-    });
-    }
-</script>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>

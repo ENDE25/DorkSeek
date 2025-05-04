@@ -1,0 +1,91 @@
+:root {
+    --primary: #2B8DFF;
+    --background: #F8FAFF;
+    --text-primary: #1A1D24;
+    --text-secondary: #6B7280;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #FFFFFF;
+}
+
+#searchBar {
+    width: 600px;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0.7rem 1.5rem;
+    border-radius: 12px;
+    border: 2px solid #E5E7EB;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+#searchBar:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(43, 141, 255, 0.15);
+    outline: none;
+}
+
+.form-control {
+    border: 2px solid #E5E7EB;
+    border-radius: 8px;
+    padding: 0.50rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--primary);
+    box-shadow: none;
+}
+
+.btn-primary {
+    background: var(--primary);
+    border: none;
+    padding: 0.55rem 2rem;
+    border-radius: 8px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: #1B6ACC;
+}
+
+h1 {
+    font-family: 'Product Sans', Arial, sans-serif;
+    font-size: 0px;           /*a 45 sale el título*/
+    margin-bottom: 10px;
+    color: #333;
+}
+
+#dark_text {
+    color:#3d4148;
+}
+
+/* MODO OSCURO */
+body.dark-mode {
+    background-color: #0d1117;
+    color: #f1f1f1;
+}
+
+body.dark-mode .form-control {
+    background-color: #0d1117;
+    color: #f1f1f1;
+    border-color: #1a222e;
+}
+
+/* INPUT FOCUS en modo oscuro */
+body.dark-mode .form-control:focus {
+    border-color: #3f8cff;
+    box-shadow: 0 0 0 0.05rem rgba(63, 140, 255, 0.25);
+    outline: 0;
+}
+
+/* Botón de limpiar en modo oscuro */
+body.dark-mode #clearBtn {
+    background-color: #3f4549;
+    border-color: #3f4549;
+    color: #f1f1f1;
+}
