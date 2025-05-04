@@ -139,7 +139,7 @@ toggleButton.addEventListener('click', () => {
 
     if (darkMode) {
         document.body.classList.add('dark-mode');
-        logo.src = 'img/DorkSeek_Logo_dark.jpg';
+        logo.src = 'DorkSeek_Logo_dark.jpg';
         excludeAI.style.backgroundColor = "#0d1117";
         excludeAI.style.borderColor = "#3f4549"
         clearBtn.style.backgroundColor = "#2f3337";
