@@ -140,15 +140,15 @@ toggleButton.addEventListener('click', () => {
     if (darkMode) {
         document.body.classList.add('dark-mode');
         logo.src = 'DorkSeek_Logo_dark.jpg';
-        excludeAI.style.backgroundColor = "#0d1117";
-        excludeAI.style.borderColor = "#3f4549"
+        //excludeAI.style.backgroundColor = "#0d1117";
+        //excludeAI.style.borderColor = "#3f4549"
         clearBtn.style.backgroundColor = "#2f3337";
         clearBtn.style.borderColor = "#2f3337"
     } else {
         document.body.classList.remove('dark-mode');
         logo.src = originalStyles.logoSrc;
-        excludeAI.style.backgroundColor = "#ffffff";
-        excludeAI.style.borderColor = "#bfbfbf"
+        //excludeAI.style.backgroundColor = "#ffffff";
+        //excludeAI.style.borderColor = "#bfbfbf"
         clearBtn.style.color = originalStyles.clearBtnText;
         clearBtn.style.borderColor = originalStyles.clearBtnBorder;
         clearBtn.style.backgroundColor = originalStyles.clearBtnBg;
