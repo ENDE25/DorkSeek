@@ -83,3 +83,6 @@ Google Dorks or Dorking, also known as Google Hacking, is a technique that consi
 
 - **_Exclude IA generated results option_**  
   Checking the box will exclude some typical terms found in AI-generated content.
+
+- **Google Drive search filter**  
+  Check the box to search for indexed Google Drive documents and folders. This automatically adds `site:drive.google.com -sign` to your search, showing only public Google Drive results.

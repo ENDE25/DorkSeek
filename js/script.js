@@ -76,6 +76,11 @@ document.getElementById('searchButton').addEventListener('click', function() {
     if (document.getElementById('excludeAI').checked) {
         searchQuery += ' -site:chat.openai.com -chatgpt -openai -copilot -bard -ai -generated -inurl:ai -inurl:generated';
     }
+    // Añadir filtro Google Drive indexado si está marcado
+    const driveCheckbox = document.getElementById('driveIndexado');
+    if (driveCheckbox && driveCheckbox.checked) {
+        searchQuery += ' site:drive.google.com -sign';
+    }
 
     // Redirigir a Google con la búsqueda construida
     window.open(`https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`, '_blank');
@@ -139,7 +144,7 @@ toggleButton.addEventListener('click', () => {
 
     if (darkMode) {
         document.body.classList.add('dark-mode');
-        logo.src = 'DorkSeek_Logo_dark.jpg';
+        logo.src = 'img/DorkSeek_Logo_dark.jpg';
         //excludeAI.style.backgroundColor = "#0d1117";
         //excludeAI.style.borderColor = "#3f4549"
         clearBtn.style.backgroundColor = "#2f3337";

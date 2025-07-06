@@ -6,17 +6,19 @@
     <meta name="description" content="DorkSeek - A powerful tool for advanced Google Dork usage in OSINT, designed to optimize the creation of custom search queries and analysis of results.">
     <meta name="robots" content="index, follow">
     <meta name="keywords" content="Google Dorks, búsqueda avanzada, operadores de búsqueda, hacking ético, seguridad informática, OSINT, ciberseguridad, técnicas de hacking, Google Hacking Database, comandos de Google Dorks">
-    <link rel="icon" type="image/x-icon" href="fv.ico">
-    <link rel="shortcut icon" href="fv.ico">
+    <link rel="icon" type="image/x-icon" href="img/fv.ico">
+    <link rel="shortcut icon" href="img/fv.ico">
     <title>DorkSeek</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style/style.css">
+    <!-- Precarga el logo oscuro para evitar parpadeos al cambiar a dark mode -->
+    <link rel="preload" as="image" href="img/DorkSeek_Logo_dark.jpg">
     <meta name="google-site-verification" content="KBBp8snCi14scIXK39u9ytrFKHahNvsQoX6dvnZJ_Ps" />
 </head>
 <body>
     <div class="container">
         <div style="height: 20px;"></div>
-        <img src="DorkSeek_Logo.jpg" alt="DorkSeek" class="logo" width="690" height="100" style="display: block; margin: 30px auto;">
+        <img src="img/DorkSeek_Logo.jpg" alt="DorkSeek" class="logo" width="690" height="100" style="display: block; margin: 30px auto;">
         <h1 class="text-center my-0">Buscador Google Dorks</h1>
         <div class="row justify-content-center">
             <input id="searchBar" type="text" class="form-control" placeholder="Introduce tu búsqueda">
@@ -164,18 +166,20 @@
             </div>
             <div style="height: 20px;"></div>
             <div class="form-check d-flex align-items-center justify-content-between">
-                <div>
+                <div class="d-flex align-items-center">
                     <input class="form-check-input" type="checkbox" id="excludeAI" title="Advertencia: Marcar esta casilla puede ocultar resultados reelevantes para la búsqueda">
-                    <label class="form-check-label" for="excludeAI">
+                    <label class="form-check-label ms-2 me-4" for="excludeAI">
                         Excluir contenidos generados por IA
+                    </label>
+                    <input class="form-check-input ms-4" type="checkbox" id="driveIndexado">
+                    <label class="form-check-label ms-2" for="driveIndexado">
+                        Buscar en Google Drive
                     </label>
                 </div>
                 <div class="form-check form-switch">
                     <label class="form-check-label me-2" for="toggle_dark" id="dark_text">Dark Mode</label>
                     <input class="form-check-input" type="checkbox" role="switch" id="toggle_dark">
                 </div>
-                  
-                
             </div>
         </div>
         
@@ -183,10 +187,12 @@
             <button id="searchButton" class="btn btn-primary">Buscar en Google</button>
         </div>
 
-        <p style="font-style: italic; color: #868686; font-size: 0.6em; text-align: center; margin-top: 15px;">by ENDE</p>
+        <p style="font-style: italic; color: #868686; font-size: 0.6em; text-align: center; margin-top: 15px;">
+            by <a href="https://github.com/ENDE25" style="color: inherit; text-decoration: none; cursor: pointer;">ENDE</a>
+        </p>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="script.js"></script>
+    <script src="js/script.js"></script>
 </body>
 </html>
