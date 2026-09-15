@@ -29,11 +29,24 @@ function splitList(value) {
 
 // Construye "operador:valor" para uno o varios valores separados por comas,
 // uniendo varios con OR entre paréntesis (ej. site:a.com, b.com -> (site:a.com OR site:b.com)).
+// Solo tiene sentido para atributos de un único valor por página (site:, filetype:):
+// una página no puede estar a la vez en dos dominios ni ser de dos tipos de
+// archivo distintos, así que "quiero cualquiera de estos" solo puede ser OR.
 function buildOrClause(operator, rawValue) {
     const values = splitList(rawValue).map(quoteIfMultiWord).filter(Boolean);
     if (values.length === 0) return '';
     if (values.length === 1) return `${operator}:${values[0]}`;
     return '(' + values.map(v => `${operator}:${v}`).join(' OR ') + ')';
+}
+
+// Construye "operador:valor" repetido para uno o varios valores, unidos con
+// espacios: en Google eso es AND implícito (ej. inurl:admin inurl:login exige
+// ambos). Es el patrón real que usan los dorks para "quiero todos estos" en
+// campos de contenido que sí pueden coexistir (intitle:, inurl:, intext:, define:).
+function buildAndClause(operator, rawValue) {
+    const values = splitList(rawValue).map(quoteIfMultiWord).filter(Boolean);
+    if (values.length === 0) return '';
+    return values.map(v => `${operator}:${v}`).join(' ');
 }
 
 // Construye exclusiones "-operador:valor" (o "-valor") para uno o varios valores,
@@ -45,15 +58,116 @@ function buildExcludeClause(rawValue, operator) {
     return values.map(v => `${prefix}${v}`).join(' ');
 }
 
+// Uno o varios tipos de archivo, cada uno expandido si tiene variantes
+// habituales (doc -> doc/docx), todo aplanado en un único grupo OR.
 function buildFiletypeClause(rawValue) {
-    const value = rawValue.trim();
-    if (!value) return '';
-    const group = FILETYPE_GROUPS[value.toLowerCase()];
-    if (group) {
-        return '(' + group.map(ext => `filetype:${ext}`).join(' OR ') + ')';
-    }
-    return `filetype:${quoteIfMultiWord(value)}`;
+    const values = splitList(rawValue);
+    if (values.length === 0) return '';
+    const extensions = [];
+    values.forEach(value => {
+        const group = FILETYPE_GROUPS[value.toLowerCase()];
+        if (group) {
+            extensions.push(...group);
+        } else {
+            extensions.push(value);
+        }
+    });
+    const clauses = extensions.map(ext => `filetype:${quoteIfMultiWord(ext)}`);
+    if (clauses.length === 1) return clauses[0];
+    return '(' + clauses.join(' OR ') + ')';
 }
+
+// Coincidencia exacta: una o varias frases entrecomilladas de forma
+// independiente y unidas con espacio ("frase1" "frase2"), que en Google es
+// AND implícito: exige que aparezcan TODAS, no basta con una.
+function buildExactMatchClause(rawValue) {
+    const values = splitList(rawValue);
+    if (values.length === 0) return '';
+    return values.map(v => `"${v}"`).join(' ');
+}
+
+// Campo de etiquetas: envuelve un input oculto (el que lee la búsqueda) con
+// una caja donde cada término confirmado con Intro se muestra como una
+// etiqueta eliminable, y el texto sin confirmar se sigue escribiendo en un
+// input interno. El input oculto se mantiene siempre sincronizado con
+// "etiquetas + texto sin confirmar", unidos por coma (OR) o espacio (AND,
+// para allinurl/allintitle/allintext) según data-joiner.
+const tagInputResetters = [];
+
+function initTagInputs() {
+    document.querySelectorAll('.tag-input').forEach(wrapper => {
+        const hidden = document.getElementById(wrapper.dataset.for);
+        const chipsContainer = wrapper.querySelector('.tag-input-chips');
+        const entry = wrapper.querySelector('.tag-input-entry');
+        const joiner = wrapper.dataset.joiner === 'space' ? ' ' : ', ';
+        if (!hidden || !chipsContainer || !entry) return;
+
+        let chips = [];
+
+        function sync() {
+            const provisional = entry.value.trim();
+            const all = provisional ? chips.concat([provisional]) : chips;
+            hidden.value = all.join(joiner);
+        }
+
+        function render() {
+            chipsContainer.innerHTML = '';
+            chips.forEach((text, idx) => {
+                const chip = document.createElement('span');
+                chip.className = 'tag-chip';
+
+                const label = document.createElement('span');
+                label.textContent = text;
+                chip.appendChild(label);
+
+                const removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.className = 'tag-chip-remove';
+                removeBtn.textContent = '×';
+                removeBtn.setAttribute('aria-label', `Eliminar "${text}"`);
+                removeBtn.addEventListener('click', () => {
+                    chips.splice(idx, 1);
+                    render();
+                    sync();
+                    entry.focus();
+                });
+                chip.appendChild(removeBtn);
+
+                chipsContainer.appendChild(chip);
+            });
+        }
+
+        entry.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                event.stopPropagation();
+                const value = entry.value.trim();
+                if (!value) return;
+                chips.push(value);
+                entry.value = '';
+                render();
+                sync();
+            } else if (event.key === 'Backspace' && entry.value === '' && chips.length > 0) {
+                chips.pop();
+                render();
+                sync();
+            }
+        });
+
+        entry.addEventListener('input', sync);
+
+        tagInputResetters.push(() => {
+            chips = [];
+            entry.value = '';
+            render();
+            sync();
+        });
+
+        sync();
+    });
+}
+
+initTagInputs();
 
 // Rango de fechas (after: / before:): los campos de fecha #afterFilter/#beforeFilter
 // (editables a mano) y el slider de doble tirador son complementarios y se
@@ -171,23 +285,23 @@ document.getElementById('searchButton').addEventListener('click', function() {
     const siteClause = buildOrClause('site', site);
     if (siteClause) clauses.push(siteClause);
 
-    const intitleClause = buildOrClause('intitle', intitle);
+    const intitleClause = buildAndClause('intitle', intitle);
     if (intitleClause) clauses.push(intitleClause);
 
-    const inurlClause = buildOrClause('inurl', inurl);
+    const inurlClause = buildAndClause('inurl', inurl);
     if (inurlClause) clauses.push(inurlClause);
 
     const filetypeClause = buildFiletypeClause(filetype);
     if (filetypeClause) clauses.push(filetypeClause);
 
-    const intextClause = buildOrClause('intext', intext);
+    const intextClause = buildAndClause('intext', intext);
     if (intextClause) clauses.push(intextClause);
 
     if (allinurl.trim()) clauses.push(`allinurl:${allinurl.trim()}`);
     if (allintitle.trim()) clauses.push(`allintitle:${allintitle.trim()}`);
     if (allintext.trim()) clauses.push(`allintext:${allintext.trim()}`);
 
-    const defineClause = buildOrClause('define', define);
+    const defineClause = buildAndClause('define', define);
     if (defineClause) clauses.push(defineClause);
 
     if (before) clauses.push(`before:${before}`);
@@ -199,7 +313,8 @@ document.getElementById('searchButton').addEventListener('click', function() {
     const excludeTermClause = buildExcludeClause(excludeTerm, '');
     if (excludeTermClause) clauses.push(excludeTermClause);
 
-    if (exactMatch.trim()) clauses.push(`"${exactMatch.trim()}"`);
+    const exactMatchClause = buildExactMatchClause(exactMatch);
+    if (exactMatchClause) clauses.push(exactMatchClause);
 
     if (document.getElementById('excludeAI').checked) {
         clauses.push('-site:chat.openai.com -chatgpt -openai -copilot -bard -ai -generated -inurl:ai -inurl:generated');
@@ -231,14 +346,26 @@ document.getElementById('searchButton').addEventListener('click', function() {
     window.open(url, '_blank');
 });
 
-// Buscar al pulsar Intro desde cualquier campo de texto/fecha del formulario
-document.querySelectorAll('.container input[type="text"], .container input[type="date"]').forEach(input => {
-    input.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            document.getElementById('searchButton').click();
-        }
-    });
+// El buscador principal es texto libre, no un campo de etiquetas: Intro
+// siempre lanza la búsqueda desde ahí, esté el foco donde esté en el resto.
+document.getElementById('searchBar').addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        document.getElementById('searchButton').click();
+    }
+});
+
+// En el resto de campos, Intro añade una etiqueta (ver initTagInputs) en vez
+// de buscar. Intro solo lanza la búsqueda cuando no hay ningún campo
+// seleccionado (el foco no está en ningún input/botón/casilla).
+document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter') return;
+    const active = document.activeElement;
+    const nothingSelected = !active || active === document.body || active === document.documentElement;
+    if (nothingSelected) {
+        event.preventDefault();
+        document.getElementById('searchButton').click();
+    }
 });
 
 // Borrar filtros
@@ -251,6 +378,10 @@ function clearFilters() {
     filters.forEach(filter => {
         filter.value = '';
     });
+
+    // Limpiamos las etiquetas confirmadas y el texto sin confirmar de cada
+    // campo de etiquetas (site, intitle, filetype, coincidencia exacta...).
+    tagInputResetters.forEach(reset => reset());
 
     // Limpiamos las casillas, salvo el interruptor de apariencia (modo oscuro)
     const checkboxes = document.querySelectorAll('.form-check-input[type="checkbox"]');
@@ -291,53 +422,53 @@ const I18N = {
         es: { placeholder: 'Introduce tu búsqueda' },
         en: { placeholder: 'Enter your search' }
     },
-    filetypeFilter: {
-        es: { label: 'Tipo de archivo (filetype:)', placeholder: "Ej: 'pdf'", title: 'Busca un tipo específico de archivo en los resultados.\n\nPara tipos con varias extensiones habituales (doc/docx, xls/xlsx, ppt/pptx, html/htm, jpg/jpeg, tiff/tif, xsl/xslt) se genera automáticamente (filetype:doc OR filetype:docx), ya que Google no agrupa esas extensiones.' },
-        en: { label: 'File type (filetype:)', placeholder: "E.g. 'pdf'", title: "Searches for a specific file type in the results.\n\nFor types with common extension variants (doc/docx, xls/xlsx, ppt/pptx, html/htm, jpg/jpeg, tiff/tif, xsl/xslt) it automatically builds (filetype:doc OR filetype:docx), since Google doesn't group those extensions." }
+    filetypeFilterEntry: {
+        es: { label: 'Tipo de archivo (filetype:)', placeholder: "Ej: 'pdf' + Intro", title: 'Busca uno o varios tipos de archivo en los resultados (filetype:pdf OR filetype:doc).\n\nEscribe un valor y pulsa Intro para añadirlo como etiqueta; puedes añadir varios.\n\nPara tipos con varias extensiones habituales (doc/docx, xls/xlsx, ppt/pptx, html/htm, jpg/jpeg, tiff/tif, xsl/xslt) cada etiqueta se expande automáticamente (filetype:doc OR filetype:docx), ya que Google no agrupa esas extensiones.' },
+        en: { label: 'File type (filetype:)', placeholder: "E.g. 'pdf' + Enter", title: "Searches for one or more file types in the results (filetype:pdf OR filetype:doc).\n\nType a value and press Enter to add it as a tag; you can add several.\n\nFor types with common extension variants (doc/docx, xls/xlsx, ppt/pptx, html/htm, jpg/jpeg, tiff/tif, xsl/xslt) each tag expands automatically (filetype:doc OR filetype:docx), since Google doesn't group those extensions." }
     },
-    exactMatchFilter: {
-        es: { label: 'Coincidencia exacta ("")', placeholder: "Ej: 'texto exacto'", title: 'Busca páginas que contengan el texto exacto dentro de las comillas.\n\nPara introducir varios términos, estos se deben separar con " ".   (ej. username" "password" "login)' },
-        en: { label: 'Exact match ("")', placeholder: "E.g. 'exact text'", title: 'Searches for pages containing the exact text inside the quotes.\n\nTo enter several terms, separate them with " ".   (e.g. username" "password" "login)' }
+    exactMatchFilterEntry: {
+        es: { label: 'Coincidencia exacta ("")', placeholder: "Ej: 'texto exacto' + Intro", title: 'Busca páginas que contengan el texto exacto de cada etiqueta.\n\nEscribe una frase y pulsa Intro para añadirla; con varias etiquetas se exige que aparezcan TODAS ("frase 1" "frase 2"), no basta con una.' },
+        en: { label: 'Exact match ("")', placeholder: "E.g. 'exact text' + Enter", title: 'Searches for pages containing the exact text of each tag.\n\nType a phrase and press Enter to add it; with several tags ALL of them are required ("phrase 1" "phrase 2"), not just one.' }
     },
-    siteFilter: {
-        es: { label: 'Dominio (site:)', placeholder: 'Ej: example.com', title: 'Limita los resultados a uno o varios dominios (site:a.com OR site:b.com).\n\nSepara varios dominios con comas: a.com, b.com' },
-        en: { label: 'Domain (site:)', placeholder: 'E.g. example.com', title: 'Limits results to one or more domains (site:a.com OR site:b.com).\n\nSeparate several domains with commas: a.com, b.com' }
+    siteFilterEntry: {
+        es: { label: 'Dominio (site:)', placeholder: 'Ej: example.com + Intro', title: 'Limita los resultados a uno o varios dominios (site:a.com OR site:b.com).\n\nEscribe un dominio y pulsa Intro para añadirlo como etiqueta; puedes añadir varios.' },
+        en: { label: 'Domain (site:)', placeholder: 'E.g. example.com + Enter', title: 'Limits results to one or more domains (site:a.com OR site:b.com).\n\nType a domain and press Enter to add it as a tag; you can add several.' }
     },
-    intitleFilter: {
-        es: { label: 'Título contiene (intitle:)', placeholder: 'Ej: index of', title: 'Busca páginas donde el título contenga el texto indicado.\n\nSi escribes varias palabras se entrecomillan automáticamente (intitle:"index of") para que Google las trate como una frase, no como una palabra suelta más el resto de términos.' },
-        en: { label: 'Title contains (intitle:)', placeholder: 'E.g. index of', title: 'Searches for pages where the title contains the given text.\n\nMulti-word values are auto-quoted (intitle:"index of") so Google treats them as a phrase, instead of scoping only the first word and leaving the rest as plain terms.' }
+    intitleFilterEntry: {
+        es: { label: 'Título contiene (intitle:)', placeholder: 'Ej: index of + Intro', title: 'Busca páginas donde el título contenga cada etiqueta.\n\nSi una etiqueta tiene varias palabras se entrecomilla automáticamente (intitle:"index of") para que Google la trate como una frase. Con varias etiquetas se exige que aparezcan TODAS (intitle:"a" intitle:"b"), no basta con una.' },
+        en: { label: 'Title contains (intitle:)', placeholder: 'E.g. index of + Enter', title: 'Searches for pages where the title contains each tag.\n\nMulti-word tags are auto-quoted (intitle:"index of") so Google treats them as a phrase. With several tags ALL of them are required (intitle:"a" intitle:"b"), not just one.' }
     },
-    inurlFilter: {
-        es: { label: 'URL contiene (inurl:)', placeholder: 'Ej: admin panel', title: 'Busca páginas donde la URL contenga el texto indicado.\n\nSi escribes varias palabras se entrecomillan automáticamente (inurl:"admin panel").' },
-        en: { label: 'URL contains (inurl:)', placeholder: 'E.g. admin panel', title: 'Searches for pages where the URL contains the given text.\n\nMulti-word values are auto-quoted (inurl:"admin panel").' }
+    inurlFilterEntry: {
+        es: { label: 'URL contiene (inurl:)', placeholder: 'Ej: admin panel + Intro', title: 'Busca páginas donde la URL contenga cada etiqueta.\n\nSi una etiqueta tiene varias palabras se entrecomilla automáticamente (inurl:"admin panel"). Con varias etiquetas se exige que aparezcan TODAS (inurl:"a" inurl:"b"), no basta con una.' },
+        en: { label: 'URL contains (inurl:)', placeholder: 'E.g. admin panel + Enter', title: 'Searches for pages where the URL contains each tag.\n\nMulti-word tags are auto-quoted (inurl:"admin panel"). With several tags ALL of them are required (inurl:"a" inurl:"b"), not just one.' }
     },
-    intextFilter: {
-        es: { label: 'Texto (intext:)', placeholder: 'Ej: texto en el cuerpo', title: 'Busca páginas que contengan ese texto en el cuerpo.\n\nSi escribes varias palabras se entrecomillan automáticamente para buscarlas como frase.' },
-        en: { label: 'Text (intext:)', placeholder: 'E.g. text in body', title: 'Searches for pages containing that text in the body.\n\nMulti-word values are auto-quoted to search them as a phrase.' }
+    intextFilterEntry: {
+        es: { label: 'Texto (intext:)', placeholder: 'Ej: texto en el cuerpo + Intro', title: 'Busca páginas que contengan cada etiqueta en el cuerpo.\n\nLas etiquetas con varias palabras se entrecomillan automáticamente. Con varias etiquetas se exige que aparezcan TODAS, no basta con una.' },
+        en: { label: 'Text (intext:)', placeholder: 'E.g. text in body + Enter', title: 'Searches for pages containing each tag in the body.\n\nMulti-word tags are auto-quoted. With several tags ALL of them are required, not just one.' }
     },
-    allinurlFilter: {
-        es: { label: 'Todo en URL (allinurl:)', placeholder: "Ej: 'texto en URL'", title: 'Busca páginas donde la URL contenga todas las palabras especificadas.\n\nNo lo combines con otros operadores en la misma búsqueda: Google no garantiza resultados fiables cuando allin* se mezcla con filtros como site: o intitle:.' },
-        en: { label: 'All in URL (allinurl:)', placeholder: "E.g. 'text in URL'", title: "Searches for pages where the URL contains all the specified words.\n\nDon't combine it with other operators in the same search: Google's results are unreliable when allin* is mixed with filters like site: or intitle:." }
+    allinurlFilterEntry: {
+        es: { label: 'Todo en URL (allinurl:)', placeholder: 'Ej: texto + Intro', title: 'Busca páginas donde la URL contenga TODAS las etiquetas (allinurl: exige que aparezcan todas, no es OR).\n\nNo lo combines con otros operadores en la misma búsqueda: Google no garantiza resultados fiables cuando allin* se mezcla con filtros como site: o intitle:.' },
+        en: { label: 'All in URL (allinurl:)', placeholder: 'E.g. text + Enter', title: "Searches for pages where the URL contains ALL the tags (allinurl: requires every one, it's not OR).\n\nDon't combine it with other operators in the same search: Google's results are unreliable when allin* is mixed with filters like site: or intitle:." }
     },
-    allintitleFilter: {
-        es: { label: 'Todo en título (allintitle:)', placeholder: "Ej: 'texto del título'", title: 'Busca páginas cuyo título contenga todas las palabras especificadas.\n\nNo lo combines con otros operadores en la misma búsqueda: Google no garantiza resultados fiables cuando allin* se mezcla con filtros como site: o intitle:.' },
-        en: { label: 'All in title (allintitle:)', placeholder: "E.g. 'title text'", title: "Searches for pages whose title contains all the specified words.\n\nDon't combine it with other operators in the same search: Google's results are unreliable when allin* is mixed with filters like site: or intitle:." }
+    allintitleFilterEntry: {
+        es: { label: 'Todo en título (allintitle:)', placeholder: 'Ej: texto + Intro', title: 'Busca páginas cuyo título contenga TODAS las etiquetas (allintitle: exige que aparezcan todas, no es OR).\n\nNo lo combines con otros operadores en la misma búsqueda: Google no garantiza resultados fiables cuando allin* se mezcla con filtros como site: o intitle:.' },
+        en: { label: 'All in title (allintitle:)', placeholder: 'E.g. text + Enter', title: "Searches for pages whose title contains ALL the tags (allintitle: requires every one, it's not OR).\n\nDon't combine it with other operators in the same search: Google's results are unreliable when allin* is mixed with filters like site: or intitle:." }
     },
-    allintextFilter: {
-        es: { label: 'Todo en texto (allintext:)', placeholder: "Ej: 'texto en el cuerpo'", title: 'Busca páginas cuyo cuerpo contenga todas las palabras especificadas.\n\nNo lo combines con otros operadores en la misma búsqueda: Google no garantiza resultados fiables cuando allin* se mezcla con filtros como site: o intitle:.' },
-        en: { label: 'All in text (allintext:)', placeholder: "E.g. 'body text'", title: "Searches for pages whose body contains all the specified words.\n\nDon't combine it with other operators in the same search: Google's results are unreliable when allin* is mixed with filters like site: or intitle:." }
+    allintextFilterEntry: {
+        es: { label: 'Todo en texto (allintext:)', placeholder: 'Ej: texto + Intro', title: 'Busca páginas cuyo cuerpo contenga TODAS las etiquetas (allintext: exige que aparezcan todas, no es OR).\n\nNo lo combines con otros operadores en la misma búsqueda: Google no garantiza resultados fiables cuando allin* se mezcla con filtros como site: o intitle:.' },
+        en: { label: 'All in text (allintext:)', placeholder: 'E.g. text + Enter', title: "Searches for pages whose body contains ALL the tags (allintext: requires every one, it's not OR).\n\nDon't combine it with other operators in the same search: Google's results are unreliable when allin* is mixed with filters like site: or intitle:." }
     },
-    defineFilter: {
-        es: { label: 'Definir (define:)', placeholder: 'Ej: ejemplo', title: 'Busca definiciones de términos directamente en Google. No documentado por Google; sin utilidad real en OSINT.' },
-        en: { label: 'Define (define:)', placeholder: 'E.g. example', title: "Searches for term definitions directly in Google. Undocumented by Google; no real OSINT use." }
+    defineFilterEntry: {
+        es: { label: 'Definir (define:)', placeholder: 'Ej: ejemplo + Intro', title: 'Busca definiciones de términos directamente en Google. No documentado por Google; sin utilidad real en OSINT.\n\nCon varias etiquetas se exige que aparezcan TODAS.' },
+        en: { label: 'Define (define:)', placeholder: 'E.g. example + Enter', title: "Searches for term definitions directly in Google. Undocumented by Google; no real OSINT use.\n\nWith several tags ALL of them are required." }
     },
-    siteExcludeFilter: {
-        es: { label: 'Excluir dominio (-site:)', placeholder: 'Ej: example.com', title: 'Excluye resultados de uno o varios dominios.\n\nSepara varios dominios con comas: a.com, b.com' },
-        en: { label: 'Exclude domain (-site:)', placeholder: 'E.g. example.com', title: 'Excludes results from one or more domains.\n\nSeparate several domains with commas: a.com, b.com' }
+    siteExcludeFilterEntry: {
+        es: { label: 'Excluir dominio (-site:)', placeholder: 'Ej: example.com + Intro', title: 'Excluye resultados de uno o varios dominios.\n\nEscribe un dominio y pulsa Intro para añadirlo como etiqueta; puedes añadir varios.' },
+        en: { label: 'Exclude domain (-site:)', placeholder: 'E.g. example.com + Enter', title: 'Excludes results from one or more domains.\n\nType a domain and press Enter to add it as a tag; you can add several.' }
     },
-    excludeTermFilter: {
-        es: { label: 'Excluir término (-)', placeholder: 'Ej: forum, login', title: 'Excluye páginas que contengan estos términos.\n\nSepara varios términos con comas: forum, login' },
-        en: { label: 'Exclude term (-)', placeholder: 'E.g. forum, login', title: 'Excludes pages containing these terms.\n\nSeparate several terms with commas: forum, login' }
+    excludeTermFilterEntry: {
+        es: { label: 'Excluir término (-)', placeholder: 'Ej: forum + Intro', title: 'Excluye páginas que contengan cada etiqueta.\n\nEscribe un término y pulsa Intro para añadirlo; puedes añadir varios.' },
+        en: { label: 'Exclude term (-)', placeholder: 'E.g. forum + Enter', title: 'Excludes pages containing each tag.\n\nType a term and press Enter to add it; you can add several.' }
     },
     afterFilter: {
         es: { label: 'Después (after:)', title: 'Limita los resultados a páginas publicadas después de esta fecha.\n\nOperador en beta desde 2019: puede dar resultados inconsistentes porque depende de metadatos de fecha que muchos sitios no gestionan bien.' },

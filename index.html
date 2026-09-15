@@ -37,8 +37,12 @@
         <div class="row mt-3">
             <!-- Filtros para los diferentes Google Dorks -->
             <div class="col-md-4">
-                <label for="filetypeFilter">Tipo de archivo (filetype:)</label>
-                <input id="filetypeFilter" type="text" class="form-control" list="filetypes" placeholder="Ej: 'pdf'" title="Busca un tipo específico de archivo en los resultados.&#10;&#10;Para tipos con varias extensiones habituales (doc/docx, xls/xlsx, ppt/pptx, html/htm, jpg/jpeg, tiff/tif, xsl/xslt) se genera automáticamente (filetype:doc OR filetype:docx), ya que Google no agrupa esas extensiones.">
+                <label for="filetypeFilterEntry">Tipo de archivo (filetype:)</label>
+                <div class="tag-input" data-for="filetypeFilter" data-joiner="comma">
+                    <div class="tag-input-chips"></div>
+                    <input id="filetypeFilterEntry" type="text" class="tag-input-entry" list="filetypes" placeholder="Ej: 'pdf' + Intro" title="Busca uno o varios tipos de archivo en los resultados (filetype:pdf OR filetype:doc).&#10;&#10;Escribe un valor y pulsa Intro para añadirlo como etiqueta; puedes añadir varios.&#10;&#10;Para tipos con varias extensiones habituales (doc/docx, xls/xlsx, ppt/pptx, html/htm, jpg/jpeg, tiff/tif, xsl/xslt) cada etiqueta se expande automáticamente (filetype:doc OR filetype:docx), ya que Google no agrupa esas extensiones.">
+                </div>
+                <input type="hidden" id="filetypeFilter">
                 <datalist id="filetypes">
                     <option value="txt">.txt</option>
                     <option value="doc">.doc / .docx</option>
@@ -107,49 +111,92 @@
                 </datalist>
             </div>
             <div class="col-md-4">
-                <label for="exactMatchFilter">Coincidencia exacta ("")</label>
-                <input id="exactMatchFilter" type="text" class="form-control" placeholder="Ej: 'texto exacto'" title="Busca páginas que contengan el texto exacto dentro de las comillas.&#10;&#10;Para introducir varios términos, estos se deben separar con &quot; &quot;.   (ej. username&quot; &quot;password&quot; &quot;login)">
+                <label for="exactMatchFilterEntry">Coincidencia exacta ("")</label>
+                <div class="tag-input" data-for="exactMatchFilter" data-joiner="comma">
+                    <div class="tag-input-chips"></div>
+                    <input id="exactMatchFilterEntry" type="text" class="tag-input-entry" placeholder="Ej: 'texto exacto' + Intro" title="Busca páginas que contengan el texto exacto de cada etiqueta.&#10;&#10;Escribe una frase y pulsa Intro para añadirla; con varias etiquetas se exige que aparezcan TODAS (&quot;frase 1&quot; &quot;frase 2&quot;), no basta con una.">
+                </div>
+                <input type="hidden" id="exactMatchFilter">
             </div>
             <div class="col-md-4">
-                <label for="siteFilter">Dominio (site:)</label>
-                <input id="siteFilter" type="text" class="form-control" placeholder="Ej: example.com" title="Limita los resultados a uno o varios dominios (site:a.com OR site:b.com).&#10;&#10;Separa varios dominios con comas: a.com, b.com">
+                <label for="siteFilterEntry">Dominio (site:)</label>
+                <div class="tag-input" data-for="siteFilter" data-joiner="comma">
+                    <div class="tag-input-chips"></div>
+                    <input id="siteFilterEntry" type="text" class="tag-input-entry" placeholder="Ej: example.com + Intro" title="Limita los resultados a uno o varios dominios (site:a.com OR site:b.com).&#10;&#10;Escribe un dominio y pulsa Intro para añadirlo como etiqueta; puedes añadir varios.">
+                </div>
+                <input type="hidden" id="siteFilter">
             </div>
             <div class="col-md-4">
-                <label for="intitleFilter">Título contiene (intitle:)</label>
-                <input id="intitleFilter" type="text" class="form-control" placeholder="Ej: index of" title="Busca páginas donde el título contenga el texto indicado.&#10;&#10;Si escribes varias palabras se entrecomillan automáticamente (intitle:&quot;index of&quot;) para que Google las trate como una frase, no como una palabra suelta más el resto de términos.">
+                <label for="intitleFilterEntry">Título contiene (intitle:)</label>
+                <div class="tag-input" data-for="intitleFilter" data-joiner="comma">
+                    <div class="tag-input-chips"></div>
+                    <input id="intitleFilterEntry" type="text" class="tag-input-entry" placeholder="Ej: index of + Intro" title="Busca páginas donde el título contenga cada etiqueta.&#10;&#10;Si una etiqueta tiene varias palabras se entrecomilla automáticamente (intitle:&quot;index of&quot;) para que Google la trate como una frase. Con varias etiquetas se exige que aparezcan TODAS (intitle:&quot;a&quot; intitle:&quot;b&quot;), no basta con una.">
+                </div>
+                <input type="hidden" id="intitleFilter">
             </div>
             <div class="col-md-4">
-                <label for="inurlFilter">URL contiene (inurl:)</label>
-                <input id="inurlFilter" type="text" class="form-control" placeholder="Ej: admin panel" title="Busca páginas donde la URL contenga el texto indicado.&#10;&#10;Si escribes varias palabras se entrecomillan automáticamente (inurl:&quot;admin panel&quot;)."
-                >
+                <label for="inurlFilterEntry">URL contiene (inurl:)</label>
+                <div class="tag-input" data-for="inurlFilter" data-joiner="comma">
+                    <div class="tag-input-chips"></div>
+                    <input id="inurlFilterEntry" type="text" class="tag-input-entry" placeholder="Ej: admin panel + Intro" title="Busca páginas donde la URL contenga cada etiqueta.&#10;&#10;Si una etiqueta tiene varias palabras se entrecomilla automáticamente (inurl:&quot;admin panel&quot;). Con varias etiquetas se exige que aparezcan TODAS (inurl:&quot;a&quot; inurl:&quot;b&quot;), no basta con una.">
+                </div>
+                <input type="hidden" id="inurlFilter">
             </div>
             <div class="col-md-4">
-                <label for="intextFilter">Texto (intext:)</label>
-                <input id="intextFilter" type="text" class="form-control" placeholder="Ej: texto en el cuerpo" title="Busca páginas que contengan ese texto en el cuerpo.&#10;&#10;Si escribes varias palabras se entrecomillan automáticamente para buscarlas como frase.">
+                <label for="intextFilterEntry">Texto (intext:)</label>
+                <div class="tag-input" data-for="intextFilter" data-joiner="comma">
+                    <div class="tag-input-chips"></div>
+                    <input id="intextFilterEntry" type="text" class="tag-input-entry" placeholder="Ej: texto en el cuerpo + Intro" title="Busca páginas que contengan cada etiqueta en el cuerpo.&#10;&#10;Las etiquetas con varias palabras se entrecomillan automáticamente. Con varias etiquetas se exige que aparezcan TODAS, no basta con una.">
+                </div>
+                <input type="hidden" id="intextFilter">
             </div>
             <div class="col-md-4">
-                <label for="allinurlFilter">Todo en URL (allinurl:)</label>
-                <input id="allinurlFilter" type="text" class="form-control" placeholder="Ej: 'texto en URL'" title="Busca páginas donde la URL contenga todas las palabras especificadas.&#10;&#10;No lo combines con otros operadores en la misma búsqueda: Google no garantiza resultados fiables cuando allin* se mezcla con filtros como site: o intitle:.">
+                <label for="allinurlFilterEntry">Todo en URL (allinurl:)</label>
+                <div class="tag-input" data-for="allinurlFilter" data-joiner="space">
+                    <div class="tag-input-chips"></div>
+                    <input id="allinurlFilterEntry" type="text" class="tag-input-entry" placeholder="Ej: texto + Intro" title="Busca páginas donde la URL contenga TODAS las etiquetas (allinurl: exige que aparezcan todas, no es OR).&#10;&#10;No lo combines con otros operadores en la misma búsqueda: Google no garantiza resultados fiables cuando allin* se mezcla con filtros como site: o intitle:.">
+                </div>
+                <input type="hidden" id="allinurlFilter">
             </div>
             <div class="col-md-4">
-                <label for="allintitleFilter">Todo en título (allintitle:)</label>
-                <input id="allintitleFilter" type="text" class="form-control" placeholder="Ej: 'texto del título'" title="Busca páginas cuyo título contenga todas las palabras especificadas.&#10;&#10;No lo combines con otros operadores en la misma búsqueda: Google no garantiza resultados fiables cuando allin* se mezcla con filtros como site: o intitle:.">
+                <label for="allintitleFilterEntry">Todo en título (allintitle:)</label>
+                <div class="tag-input" data-for="allintitleFilter" data-joiner="space">
+                    <div class="tag-input-chips"></div>
+                    <input id="allintitleFilterEntry" type="text" class="tag-input-entry" placeholder="Ej: texto + Intro" title="Busca páginas cuyo título contenga TODAS las etiquetas (allintitle: exige que aparezcan todas, no es OR).&#10;&#10;No lo combines con otros operadores en la misma búsqueda: Google no garantiza resultados fiables cuando allin* se mezcla con filtros como site: o intitle:.">
+                </div>
+                <input type="hidden" id="allintitleFilter">
             </div>
             <div class="col-md-4">
-                <label for="allintextFilter">Todo en texto (allintext:)</label>
-                <input id="allintextFilter" type="text" class="form-control" placeholder="Ej: 'texto en el cuerpo'" title="Busca páginas cuyo cuerpo contenga todas las palabras especificadas.&#10;&#10;No lo combines con otros operadores en la misma búsqueda: Google no garantiza resultados fiables cuando allin* se mezcla con filtros como site: o intitle:.">
+                <label for="allintextFilterEntry">Todo en texto (allintext:)</label>
+                <div class="tag-input" data-for="allintextFilter" data-joiner="space">
+                    <div class="tag-input-chips"></div>
+                    <input id="allintextFilterEntry" type="text" class="tag-input-entry" placeholder="Ej: texto + Intro" title="Busca páginas cuyo cuerpo contenga TODAS las etiquetas (allintext: exige que aparezcan todas, no es OR).&#10;&#10;No lo combines con otros operadores en la misma búsqueda: Google no garantiza resultados fiables cuando allin* se mezcla con filtros como site: o intitle:.">
+                </div>
+                <input type="hidden" id="allintextFilter">
             </div>
             <div class="col-md-4">
-                <label for="defineFilter">Definir (define:)</label>
-                <input id="defineFilter" type="text" class="form-control" placeholder="Ej: ejemplo" title="Busca definiciones de términos directamente en Google. No documentado por Google; sin utilidad real en OSINT.">
+                <label for="defineFilterEntry">Definir (define:)</label>
+                <div class="tag-input" data-for="defineFilter" data-joiner="comma">
+                    <div class="tag-input-chips"></div>
+                    <input id="defineFilterEntry" type="text" class="tag-input-entry" placeholder="Ej: ejemplo + Intro" title="Busca definiciones de términos directamente en Google. No documentado por Google; sin utilidad real en OSINT.&#10;&#10;Con varias etiquetas se exige que aparezcan TODAS.">
+                </div>
+                <input type="hidden" id="defineFilter">
             </div>
             <div class="col-md-4">
-                <label for="siteExcludeFilter">Excluir dominio (-site:)</label>
-                <input id="siteExcludeFilter" type="text" class="form-control" placeholder="Ej: example.com" title="Excluye resultados de uno o varios dominios.&#10;&#10;Separa varios dominios con comas: a.com, b.com">
+                <label for="siteExcludeFilterEntry">Excluir dominio (-site:)</label>
+                <div class="tag-input" data-for="siteExcludeFilter" data-joiner="comma">
+                    <div class="tag-input-chips"></div>
+                    <input id="siteExcludeFilterEntry" type="text" class="tag-input-entry" placeholder="Ej: example.com + Intro" title="Excluye resultados de uno o varios dominios.&#10;&#10;Escribe un dominio y pulsa Intro para añadirlo como etiqueta; puedes añadir varios.">
+                </div>
+                <input type="hidden" id="siteExcludeFilter">
             </div>
             <div class="col-md-4">
-                <label for="excludeTermFilter">Excluir término (-)</label>
-                <input id="excludeTermFilter" type="text" class="form-control" placeholder="Ej: forum, login" title="Excluye páginas que contengan estos términos.&#10;&#10;Separa varios términos con comas: forum, login">
+                <label for="excludeTermFilterEntry">Excluir término (-)</label>
+                <div class="tag-input" data-for="excludeTermFilter" data-joiner="comma">
+                    <div class="tag-input-chips"></div>
+                    <input id="excludeTermFilterEntry" type="text" class="tag-input-entry" placeholder="Ej: forum + Intro" title="Excluye páginas que contengan cada etiqueta.&#10;&#10;Escribe un término y pulsa Intro para añadirlo; puedes añadir varios.">
+                </div>
+                <input type="hidden" id="excludeTermFilter">
             </div>
             <div class="col-12">
                 <div class="date-range-row">
