@@ -400,17 +400,46 @@ function clearFilters() {
 }
 
 
+// Preferencias de apariencia (modo oscuro / idioma) guardadas entre visitas.
+// localStorage puede fallar (modo privado, almacenamiento bloqueado); si
+// falla, la preferencia simplemente no persiste más allá de la sesión.
+const STORAGE_KEYS = { theme: 'dorkseek-theme', lang: 'dorkseek-lang' };
+
+function readStoredPreference(key) {
+    try {
+        return localStorage.getItem(key);
+    } catch (e) {
+        return null;
+    }
+}
+
+function writeStoredPreference(key, value) {
+    try {
+        localStorage.setItem(key, value);
+    } catch (e) {
+        // sin almacenamiento disponible: no persiste, pero no rompe nada
+    }
+}
+
 //modo oscuro
 const toggleButton = document.getElementById('toggle_dark');
 const logo = document.querySelector('.logo');
 const originalLogoSrc = logo.src;
 
+function applyDarkMode(isDark) {
+    document.body.classList.toggle('dark-mode', isDark);
+    logo.src = isDark ? 'img/DorkSeek_Logo_dark.jpg' : originalLogoSrc;
+    toggleButton.checked = isDark;
+}
+
 toggleButton.addEventListener('click', () => {
-    document.body.classList.toggle('dark-mode');
-    logo.src = document.body.classList.contains('dark-mode')
-        ? 'img/DorkSeek_Logo_dark.jpg'
-        : originalLogoSrc;
+    applyDarkMode(toggleButton.checked);
+    writeStoredPreference(STORAGE_KEYS.theme, toggleButton.checked ? 'dark' : 'light');
 });
+
+if (readStoredPreference(STORAGE_KEYS.theme) === 'dark') {
+    applyDarkMode(true);
+}
 
 
 // Idioma de la interfaz (ES / EN)
@@ -536,6 +565,9 @@ function applyLanguage(lang) {
 }
 
 document.querySelectorAll('.lang-option').forEach(button => {
-    button.addEventListener('click', () => applyLanguage(button.dataset.lang));
+    button.addEventListener('click', () => {
+        applyLanguage(button.dataset.lang);
+        writeStoredPreference(STORAGE_KEYS.lang, button.dataset.lang);
+    });
 });
-applyLanguage('es');
+applyLanguage(readStoredPreference(STORAGE_KEYS.lang) === 'en' ? 'en' : 'es');
