@@ -19,18 +19,26 @@
     <div class="container">
         <div style="height: 20px;"></div>
         <img src="img/DorkSeek_Logo.jpg" alt="DorkSeek" class="logo" width="690" height="100" style="display: block; margin: 30px auto;">
-        <h1 class="text-center my-0">Buscador Google Dorks</h1>
+        <h1 class="text-center my-0" id="pageHeading">Buscador Google Dorks</h1>
         <div class="row justify-content-center">
-            <input id="searchBar" type="text" class="form-control" placeholder="Introduce tu búsqueda">
+            <div class="search-shell">
+                <span class="search-icon-slot">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+                        <line x1="16.5" y1="16.5" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </span>
+                <input id="searchBar" type="text" class="form-control" placeholder="Introduce tu búsqueda">
+            </div>
         </div>
         <div class="row mt-4 justify-content-center">
-            <button id="clearFiltersButton" class="btn btn-secondary btn-sm mx-2" style="width: 120px;">Borrar Filtros</button>
+            <button id="clearFiltersButton" class="btn btn-sm mx-2" style="width: 130px;">Borrar Filtros</button>
         </div>
         <div class="row mt-3">
             <!-- Filtros para los diferentes Google Dorks -->
             <div class="col-md-4">
                 <label for="filetypeFilter">Tipo de archivo (filetype:)</label>
-                <input id="filetypeFilter" type="text" class="form-control" list="filetypes" placeholder="Ej: 'pdf'" title="Busca un tipo específico de archivo en los resultados.">
+                <input id="filetypeFilter" type="text" class="form-control" list="filetypes" placeholder="Ej: 'pdf'" title="Busca un tipo específico de archivo en los resultados.&#10;&#10;Para tipos con varias extensiones habituales (doc/docx, xls/xlsx, ppt/pptx, html/htm, jpg/jpeg, tiff/tif, xsl/xslt) se genera automáticamente (filetype:doc OR filetype:docx), ya que Google no agrupa esas extensiones.">
                 <datalist id="filetypes">
                     <option value="txt">.txt</option>
                     <option value="doc">.doc / .docx</option>
@@ -92,12 +100,10 @@
                     <option value="tar">.tar</option>
                     <option value="gz">.gz</option>
                     <option value="bz2">.bz2</option>
-                    <option value="gdoc">.gdoc</option>
-                    <option value="gsheet">.gsheet</option>
-                    <option value="gslides">.gslides</option>
-                    <option value="gform">.gform</option>
-                    <option value="gdraw">.gdraw</option>
-                    <option value="gjam">.gjam</option>
+                    <option value="env">.env</option>
+                    <option value="yml">.yml / .yaml</option>
+                    <option value="pem">.pem</option>
+                    <option value="key">.key</option>
                 </datalist>
             </div>
             <div class="col-md-4">
@@ -106,83 +112,94 @@
             </div>
             <div class="col-md-4">
                 <label for="siteFilter">Dominio (site:)</label>
-                <input id="siteFilter" type="text" class="form-control" placeholder="Ej: example.com" title="Limita los resultados a un dominio o sitio web específico.">
+                <input id="siteFilter" type="text" class="form-control" placeholder="Ej: example.com" title="Limita los resultados a uno o varios dominios (site:a.com OR site:b.com).&#10;&#10;Separa varios dominios con comas: a.com, b.com">
             </div>
             <div class="col-md-4">
                 <label for="intitleFilter">Título contiene (intitle:)</label>
-                <input id="intitleFilter" type="text" class="form-control" placeholder="Ej: 'texto del título'" title="Busca páginas donde el título contenga al menos una de las palabras especificadas.">
+                <input id="intitleFilter" type="text" class="form-control" placeholder="Ej: index of" title="Busca páginas donde el título contenga el texto indicado.&#10;&#10;Si escribes varias palabras se entrecomillan automáticamente (intitle:&quot;index of&quot;) para que Google las trate como una frase, no como una palabra suelta más el resto de términos.">
             </div>
             <div class="col-md-4">
                 <label for="inurlFilter">URL contiene (inurl:)</label>
-                <input id="inurlFilter" type="text" class="form-control" placeholder="Ej: 'texto en URL'" title="Busca páginas donde la URL contenga al menos una de las palabras especificadas.">
+                <input id="inurlFilter" type="text" class="form-control" placeholder="Ej: admin panel" title="Busca páginas donde la URL contenga el texto indicado.&#10;&#10;Si escribes varias palabras se entrecomillan automáticamente (inurl:&quot;admin panel&quot;)."
+                >
             </div>
             <div class="col-md-4">
                 <label for="intextFilter">Texto (intext:)</label>
-                <input id="intextFilter" type="text" class="form-control" placeholder="Ej: 'texto en el cuerpo'" title="Busca páginas que contengan texto específico en el cuerpo.">
-            </div>
-            <div class="col-md-4">
-                <label for="cacheFilter">Versión en cache (cache:)</label>
-                <input id="cacheFilter" type="text" class="form-control" placeholder="Ej: example.com" title="Muestra la versión en caché de una página web almacenada por Google.">
-            </div>
-            <div class="col-md-4">
-                <label for="linkFilter">Contiene enlaces a (link:)</label>
-                <input id="linkFilter" type="text" class="form-control" placeholder="Ej: example.com" title="Busca páginas que enlacen a un sitio o URL específico.">
-            </div>
-            <div class="col-md-4">
-                <label for="relatedFilter">Sitios relacionados con (related:)</label>
-                <input id="relatedFilter" type="text" class="form-control" placeholder="Ej: example.com" title="Encuentra sitios web relacionados con un dominio específico.">
+                <input id="intextFilter" type="text" class="form-control" placeholder="Ej: texto en el cuerpo" title="Busca páginas que contengan ese texto en el cuerpo.&#10;&#10;Si escribes varias palabras se entrecomillan automáticamente para buscarlas como frase.">
             </div>
             <div class="col-md-4">
                 <label for="allinurlFilter">Todo en URL (allinurl:)</label>
-                <input id="allinurlFilter" type="text" class="form-control" placeholder="Ej: 'texto en URL'" title="Busca páginas donde la URL contenga todas las palabras especificadas.">
+                <input id="allinurlFilter" type="text" class="form-control" placeholder="Ej: 'texto en URL'" title="Busca páginas donde la URL contenga todas las palabras especificadas.&#10;&#10;No lo combines con otros operadores en la misma búsqueda: Google no garantiza resultados fiables cuando allin* se mezcla con filtros como site: o intitle:.">
             </div>
             <div class="col-md-4">
                 <label for="allintitleFilter">Todo en título (allintitle:)</label>
-                <input id="allintitleFilter" type="text" class="form-control" placeholder="Ej: 'texto del título'" title="Busca páginas cuyo título contenga todas las palabras especificadas.">
+                <input id="allintitleFilter" type="text" class="form-control" placeholder="Ej: 'texto del título'" title="Busca páginas cuyo título contenga todas las palabras especificadas.&#10;&#10;No lo combines con otros operadores en la misma búsqueda: Google no garantiza resultados fiables cuando allin* se mezcla con filtros como site: o intitle:.">
             </div>
             <div class="col-md-4">
                 <label for="allintextFilter">Todo en texto (allintext:)</label>
-                <input id="allintextFilter" type="text" class="form-control" placeholder="Ej: 'texto en el cuerpo'" title="Busca páginas cuyo cuerpo contenga todas las palabras especificadas.">
+                <input id="allintextFilter" type="text" class="form-control" placeholder="Ej: 'texto en el cuerpo'" title="Busca páginas cuyo cuerpo contenga todas las palabras especificadas.&#10;&#10;No lo combines con otros operadores en la misma búsqueda: Google no garantiza resultados fiables cuando allin* se mezcla con filtros como site: o intitle:.">
             </div>
             <div class="col-md-4">
                 <label for="defineFilter">Definir (define:)</label>
-                <input id="defineFilter" type="text" class="form-control" placeholder="Ej: ejemplo" title="Busca definiciones de términos directamente en Google.">
-            </div>
-            <div class="col-md-4">
-                <label for="infoFilter">Información (info:)</label>
-                <input id="infoFilter" type="text" class="form-control" placeholder="Ej: example.com" title="Muestra información sobre un sitio web específico.">
+                <input id="defineFilter" type="text" class="form-control" placeholder="Ej: ejemplo" title="Busca definiciones de términos directamente en Google. No documentado por Google; sin utilidad real en OSINT.">
             </div>
             <div class="col-md-4">
                 <label for="siteExcludeFilter">Excluir dominio (-site:)</label>
-                <input id="siteExcludeFilter" type="text" class="form-control" placeholder="Ej: example.com" title="Excluye resultados de un dominio o sitio específico.">
+                <input id="siteExcludeFilter" type="text" class="form-control" placeholder="Ej: example.com" title="Excluye resultados de uno o varios dominios.&#10;&#10;Separa varios dominios con comas: a.com, b.com">
             </div>
             <div class="col-md-4">
-                <label for="beforeFilter">Antes (before:)</label>
-                <input id ="beforeFilter" type="date" class="form-control" placeholder="Ej: '2022-01-01'" title="Limita los resultados a páginas publicadas antes de una fecha específica.">
+                <label for="excludeTermFilter">Excluir término (-)</label>
+                <input id="excludeTermFilter" type="text" class="form-control" placeholder="Ej: forum, login" title="Excluye páginas que contengan estos términos.&#10;&#10;Separa varios términos con comas: forum, login">
             </div>
-            <div class="col-md-4">
-                <label for="afterFilter">Después (after:)</label>
-                <input id="afterFilter" type="date" class="form-control" placeholder="Ej: '2022-01-01'" title="Limita los resultados a páginas publicadas después de una fecha específica.">
-            </div>
-            <div style="height: 20px;"></div>
-            <div class="form-check d-flex align-items-center justify-content-between">
-                <div class="d-flex align-items-center">
-                    <input class="form-check-input" type="checkbox" id="excludeAI" title="Advertencia: Marcar esta casilla puede ocultar resultados reelevantes para la búsqueda">
-                    <label class="form-check-label ms-2 me-4" for="excludeAI">
-                        Excluir contenidos generados por IA
-                    </label>
-                    <input class="form-check-input ms-4" type="checkbox" id="driveIndexado">
-                    <label class="form-check-label ms-2" for="driveIndexado">
-                        Buscar en Google Drive
-                    </label>
+            <div class="col-12">
+                <div class="date-range-row">
+                    <input id="afterFilter" type="date" class="form-control date-edge" aria-label="Después (after:)" title="Limita los resultados a páginas publicadas después de esta fecha.&#10;&#10;Operador en beta desde 2019: puede dar resultados inconsistentes porque depende de metadatos de fecha que muchos sitios no gestionan bien.">
+                    <div class="date-range" id="dateRangeControl">
+                        <div class="date-range-track"></div>
+                        <div class="date-range-fill" id="dateRangeFill"></div>
+                        <input type="range" id="afterRange" class="date-range-input" step="1" aria-label="Fecha desde (after:)">
+                        <input type="range" id="beforeRange" class="date-range-input" step="1" aria-label="Fecha hasta (before:)">
+                    </div>
+                    <input id="beforeFilter" type="date" class="form-control date-edge" aria-label="Antes (before:)" title="Limita los resultados a páginas publicadas antes de esta fecha.&#10;&#10;Operador en beta desde 2019: puede dar resultados inconsistentes porque depende de metadatos de fecha que muchos sitios no gestionan bien.">
                 </div>
-                <div class="form-check form-switch">
-                    <label class="form-check-label me-2" for="toggle_dark" id="dark_text">Dark Mode</label>
-                    <input class="form-check-input" type="checkbox" role="switch" id="toggle_dark">
+            </div>
+            <div class="col-12">
+                <div id="dorkWarning" class="alert alert-warning py-2 px-3" role="alert" hidden>
+                    Estás combinando un operador <code>allin*</code> (allintitle/allinurl/allintext) con otros filtros en la misma búsqueda. Google no garantiza resultados fiables en ese caso; considera usarlo solo, sin otros operadores.
+                </div>
+                <div class="options-panel">
+                    <div class="options-grid">
+                        <label class="option-item" for="excludeAI">
+                            <input class="form-check-input" type="checkbox" id="excludeAI" title="Filtro heurístico: excluye páginas cuyo dominio o texto contiene términos típicos de IA (chatgpt, copilot, bard, etc).&#10;&#10;Advertencia: no detecta contenido generado por IA de verdad, solo esas palabras clave, y puede ocultar resultados relevantes que simplemente las mencionen. Para quitar la capa de IA de Google (AI Overviews), usa 'Vista Web clásica'.">
+                            <span data-i18n-text>Excluir términos típicos de IA (heurístico)</span>
+                        </label>
+                        <label class="option-item" for="classicWeb">
+                            <input class="form-check-input" type="checkbox" id="classicWeb" title="Añade el parámetro udm=14 a la URL de Google, que muestra la pestaña 'Web' clásica sin AI Overviews ni resúmenes generados por IA.&#10;&#10;Parámetro no documentado, obtenido por ingeniería inversa: puede dejar de funcionar sin aviso.">
+                            <span data-i18n-text>Vista Web clásica (sin AI Overviews)</span>
+                        </label>
+                        <label class="option-item" for="literalMode">
+                            <input class="form-check-input" type="checkbox" id="literalMode" title="Añade el parámetro tbs=li:1 a la URL de Google, que desactiva sinónimos y corrección ortográfica automática (búsqueda literal).&#10;&#10;Parámetro no documentado, obtenido por ingeniería inversa: puede dejar de funcionar sin aviso.">
+                            <span data-i18n-text>Modo literal (sin sinónimos)</span>
+                        </label>
+                        <label class="option-item" for="driveIndexado">
+                            <input class="form-check-input" type="checkbox" id="driveIndexado" title="Busca documentos y carpetas indexados en Google Drive (drive.google.com) y Google Docs/Sheets/Slides compartidos (docs.google.com), excluyendo páginas de inicio de sesión.">
+                            <span data-i18n-text>Buscar en Google Drive / Docs</span>
+                        </label>
+                    </div>
+                    <div class="switches-row">
+                        <div class="lang-switch" role="group" aria-label="Idioma de la interfaz / Interface language">
+                            <button type="button" class="lang-option is-active" id="langEs" data-lang="es" aria-pressed="true">ES</button>
+                            <button type="button" class="lang-option" id="langEn" data-lang="en" aria-pressed="false">EN</button>
+                        </div>
+                        <div class="form-check form-switch">
+                            <label class="form-check-label" for="toggle_dark" id="dark_text">Dark Mode</label>
+                            <input class="form-check-input" type="checkbox" role="switch" id="toggle_dark">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        
+
         <div class="row mt-4 justify-content-center">
             <button id="searchButton" class="btn btn-primary">Buscar en Google</button>
         </div>

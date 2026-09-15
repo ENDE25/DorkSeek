@@ -10,47 +10,194 @@ body {
     background-color: #FFFFFF;
 }
 
-#searchBar {
-    width: 600px;
-    max-width: 800px;
+.logo {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Buscador estilo Google: pastilla redondeada, icono de lupa, sombra al pasar el ratón/enfocar */
+.search-shell {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
     margin: 0 auto;
-    padding: 0.7rem 1.5rem;
-    border-radius: 12px;
-    border: 2px solid #E5E7EB;
+}
+
+/* Zona reservada a la izquierda de la pastilla (mismo ancho que el
+   padding-left del input) donde se centra el icono con flexbox, en vez de
+   calcular su "left" a mano — así el centrado no depende de aritmética
+   frágil sobre el border-radius. */
+.search-shell .search-icon-slot {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.search-shell .search-icon {
+    width: 20px;
+    height: 20px;
+    color: #9AA0A6;
+}
+
+#searchBar {
+    width: 100%;
+    padding: 0.75rem 1.25rem 0.75rem 3rem;
+    border-radius: 24px;
+    border: 1px solid #DFE1E5;
     font-size: 1rem;
-    transition: all 0.3s ease;
+    background-color: #fff;
+    box-shadow: none;
+    transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+#searchBar:hover {
+    box-shadow: 0 1px 6px rgba(32, 33, 36, 0.18);
+    border-color: rgba(223, 225, 229, 0);
 }
 
 #searchBar:focus {
+    box-shadow: 0 1px 8px rgba(32, 33, 36, 0.24);
+    border-color: rgba(223, 225, 229, 0);
+    outline: none;
+}
+
+body.dark-mode .search-shell .search-icon {
+    color: #9aa0a6;
+}
+
+body.dark-mode #searchBar {
+    background-color: #16202b;
+    border-color: #303134;
+    color: #f1f1f1;
+}
+
+body.dark-mode #searchBar:hover,
+body.dark-mode #searchBar:focus {
+    box-shadow: 0 1px 8px rgba(0, 0, 0, 0.45);
+    border-color: #3f8cff55;
+}
+
+/* Campos de filtro: mismo lenguaje visual que el buscador principal
+   (borde Google gris, radio consistente, anillo azul al enfocar en vez
+   de un simple cambio de borde). */
+.form-control {
+    border: 1.5px solid #DFE1E5;
+    border-radius: 10px;
+    padding: 0.55rem 1rem;
+    background-color: #fff;
+    box-shadow: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-control:hover {
+    border-color: #C7CCD1;
+}
+
+.form-control:focus {
     border-color: var(--primary);
     box-shadow: 0 0 0 3px rgba(43, 141, 255, 0.15);
     outline: none;
 }
 
-.form-control {
-    border: 2px solid #E5E7EB;
-    border-radius: 8px;
-    padding: 0.50rem 1rem;
-    transition: all 0.3s ease;
+/* Aire entre filas de filtros: separa la etiqueta de una fila del campo
+   de la fila anterior, y la etiqueta de su propio campo, sin exagerar. */
+.row.mt-3 {
+    row-gap: 0.9rem;
 }
 
-.form-control:focus {
-    border-color: var(--primary);
-    box-shadow: none;
-}
-
-.btn-primary {
-    background: var(--primary);
-    border: none;
-    padding: 0.55rem 2rem;
-    border-radius: 8px;
+.row.mt-3 label {
+    display: block;
+    margin-bottom: 0.3rem;
     font-weight: 500;
-    letter-spacing: 0.02em;
-    transition: all 0.3s ease;
+    color: var(--text-primary);
+}
+
+body.dark-mode .row.mt-3 label {
+    color: #e8eaed;
+}
+
+/* Botón de búsqueda: acción principal, con el color de acento de toda la
+   interfaz (mismo azul que los focus rings y las chips activas) para que
+   destaque claramente sobre el resto de controles, más neutros.
+   width:auto anula la regla ".row > *" de Bootstrap, que fuerza width:100%
+   a cualquier hijo directo de .row que no sea una columna. */
+.btn-primary {
+    width: auto;
+    background: var(--primary);
+    color: #fff;
+    border: 1px solid var(--primary);
+    padding: 0.65rem 2.25rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.01em;
+    box-shadow: 0 2px 8px rgba(43, 141, 255, 0.35);
+    transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
 }
 
 .btn-primary:hover {
     background: #1B6ACC;
+    border-color: #1B6ACC;
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(43, 141, 255, 0.45);
+    transform: translateY(-1px);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(43, 141, 255, 0.35);
+}
+
+.btn-primary:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(43, 141, 255, 0.35), 0 2px 8px rgba(43, 141, 255, 0.35);
+}
+
+body.dark-mode .btn-primary {
+    background: #3f8cff;
+    border-color: #3f8cff;
+    box-shadow: 0 2px 10px rgba(63, 140, 255, 0.3);
+}
+
+body.dark-mode .btn-primary:hover {
+    background: #6badff;
+    border-color: #6badff;
+    box-shadow: 0 4px 16px rgba(63, 140, 255, 0.4);
+}
+
+/* Botón "Borrar Filtros" como acción secundaria discreta, mismo radio y
+   color de borde que el resto de campos para que se sienta del mismo set. */
+#clearFiltersButton {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1.5px solid #DFE1E5;
+    border-radius: 999px;
+    font-weight: 500;
+    transition: all 0.15s ease;
+}
+
+#clearFiltersButton:hover {
+    background: #F8FAFF;
+    color: var(--primary);
+    border-color: var(--primary);
+}
+
+body.dark-mode #clearFiltersButton {
+    background: transparent;
+    color: #9aa0a6;
+    border-color: #3f4549;
+}
+
+body.dark-mode #clearFiltersButton:hover {
+    background: #161b22;
+    color: #7fb3ff;
+    border-color: #3f8cff;
 }
 
 h1 {
@@ -71,15 +218,19 @@ body.dark-mode {
 }
 
 body.dark-mode .form-control {
-    background-color: #0d1117;
+    background-color: #16202b;
     color: #f1f1f1;
-    border-color: #1a222e;
+    border-color: #303134;
+}
+
+body.dark-mode .form-control:hover {
+    border-color: #3f4549;
 }
 
 /* INPUT FOCUS en modo oscuro */
 body.dark-mode .form-control:focus {
     border-color: #3f8cff;
-    box-shadow: 0 0 0 0.05rem rgba(63, 140, 255, 0.25);
+    box-shadow: 0 0 0 3px rgba(63, 140, 255, 0.25);
     outline: 0;
 }
 
@@ -111,4 +262,298 @@ body.dark-mode .form-check-input[type="checkbox"]:checked {
 .d-flex.align-items-center .form-check-label {
   position: relative;
   top: 4px;
+}
+
+/* Panel de opciones (checkboxes de filtros + interruptores) */
+.options-panel {
+    margin-top: 0.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.options-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+
+/* Cada opción es una "chip" seleccionable: más claro que una fila de checkboxes sueltos */
+.option-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin: 0;
+    padding: 0.5rem 1rem 0.5rem 0.75rem;
+    border-radius: 999px;
+    border: 1.5px solid #DFE1E5;
+    background: #fff;
+    cursor: pointer;
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.2;
+    transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+.option-item:hover {
+    border-color: #A9C3E8;
+    background: #F8FAFF;
+}
+
+.option-item:has(input:checked) {
+    border-color: var(--primary);
+    background: rgba(43, 141, 255, 0.08);
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.option-item input.form-check-input {
+    margin: 0;
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    accent-color: var(--primary);
+    cursor: pointer;
+}
+
+body.dark-mode .option-item {
+    background: #0d1117;
+    border-color: #303134;
+    color: #9aa0a6;
+}
+
+body.dark-mode .option-item:hover {
+    background: #161b22;
+    border-color: #3f4549;
+}
+
+body.dark-mode .option-item:has(input:checked) {
+    border-color: #3f8cff;
+    background: rgba(63, 140, 255, 0.15);
+    color: #7fb3ff;
+}
+
+.switches-row {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1.75rem;
+    flex-wrap: wrap;
+    border-top: 1px solid #E5E7EB;
+    padding-top: 0.9rem;
+}
+
+.switches-row .form-check.form-switch {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    padding-left: 0;
+}
+
+/* Bootstrap reserva el hueco del switch con un margin-left negativo pensado
+   para su layout de bloque; en flex eso monta el switch sobre el texto anterior. */
+.switches-row .form-switch .form-check-input {
+    margin-left: 0;
+}
+
+.switches-row .form-check-label {
+    margin: 0;
+    top: 0;
+}
+
+body.dark-mode .switches-row {
+    border-top-color: #1a222e;
+}
+
+/* Rango de fechas (after: / before:): un único control integrado — campo de
+   fecha editable a mano a cada lado, con el deslizante de doble tirador
+   entre ambos. Sin etiquetas visibles: los dos campos de fecha y el
+   deslizante se mantienen sincronizados en los dos sentidos. Algo más de
+   aire respecto al resto de filtros, para que se lea como un grupo aparte. */
+.date-range-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    max-width: 620px;
+    margin: 0.7rem auto 0;
+}
+
+/* Campos de fecha sin contorno propio, para que se sientan parte del mismo
+   control que el deslizante en vez de dos inputs sueltos a los lados. */
+.date-edge {
+    flex: 0 0 148px;
+    text-align: center;
+    border-color: transparent;
+    background: transparent;
+}
+
+.date-edge:hover {
+    border-color: #DFE1E5;
+    background: #fff;
+}
+
+.date-edge:focus {
+    border-color: var(--primary);
+    background: #fff;
+}
+
+body.dark-mode .date-edge:hover,
+body.dark-mode .date-edge:focus {
+    background: #16202b;
+}
+
+/* En pantallas estrechas (mismo punto de corte que el resto de la cuadrícula
+   de filtros) el slider no tiene sitio junto a dos campos de fecha de ancho
+   fijo, así que se apilan verticalmente en vez de aplastarse. */
+@media (max-width: 767.98px) {
+    .date-range-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.6rem;
+    }
+
+    .date-edge {
+        flex: 1 1 auto;
+        width: 100%;
+    }
+}
+
+.date-range {
+    position: relative;
+    flex: 1 1 auto;
+    height: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.date-range-track {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 4px;
+    border-radius: 999px;
+    background: #E5E7EB;
+}
+
+.date-range-fill {
+    position: absolute;
+    height: 4px;
+    border-radius: 999px;
+    background: var(--primary);
+}
+
+.date-range-input {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    margin: 0;
+    background: transparent;
+    -webkit-appearance: none;
+    appearance: none;
+    pointer-events: none;
+}
+
+.date-range-input::-webkit-slider-runnable-track {
+    -webkit-appearance: none;
+    background: transparent;
+    height: 4px;
+}
+
+.date-range-input::-moz-range-track {
+    background: transparent;
+    height: 4px;
+    border: none;
+}
+
+.date-range-input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    pointer-events: auto;
+    width: 18px;
+    height: 18px;
+    margin-top: -7px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2.5px solid var(--primary);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    cursor: grab;
+}
+
+.date-range-input::-moz-range-thumb {
+    pointer-events: auto;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2.5px solid var(--primary);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    cursor: grab;
+}
+
+.date-range-input:active::-webkit-slider-thumb,
+.date-range-input:active::-moz-range-thumb {
+    cursor: grabbing;
+    box-shadow: 0 2px 8px rgba(43, 141, 255, 0.45);
+}
+
+.date-range-input:focus-visible::-webkit-slider-thumb,
+.date-range-input:focus-visible::-moz-range-thumb {
+    outline: 3px solid rgba(43, 141, 255, 0.3);
+    outline-offset: 2px;
+}
+
+body.dark-mode .date-range-track {
+    background: #303134;
+}
+
+body.dark-mode .date-range-input::-webkit-slider-thumb,
+body.dark-mode .date-range-input::-moz-range-thumb {
+    background: #16202b;
+    border-color: #3f8cff;
+}
+
+/* Selector de idioma: control segmentado ES/EN, no un interruptor con una sola etiqueta */
+.lang-switch {
+    display: inline-flex;
+    background: #F1F3F4;
+    border-radius: 999px;
+    padding: 3px;
+    gap: 2px;
+}
+
+.lang-option {
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.lang-option:hover {
+    color: var(--text-primary);
+}
+
+.lang-option.is-active {
+    background: #fff;
+    color: var(--primary);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+body.dark-mode .lang-switch {
+    background: #16202b;
+}
+
+body.dark-mode .lang-option {
+    color: #9aa0a6;
+}
+
+body.dark-mode .lang-option.is-active {
+    background: #2f3337;
+    color: #7fb3ff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
