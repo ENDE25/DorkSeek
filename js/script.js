@@ -231,6 +231,16 @@ document.getElementById('searchButton').addEventListener('click', function() {
     window.open(url, '_blank');
 });
 
+// Buscar al pulsar Intro desde cualquier campo de texto/fecha del formulario
+document.querySelectorAll('.container input[type="text"], .container input[type="date"]').forEach(input => {
+    input.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            document.getElementById('searchButton').click();
+        }
+    });
+});
+
 // Borrar filtros
 const clearFiltersButton = document.getElementById('clearFiltersButton');
 clearFiltersButton.addEventListener('click', clearFilters);

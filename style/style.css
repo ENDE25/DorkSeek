@@ -352,14 +352,21 @@ body.dark-mode .option-item:has(input:checked) {
 }
 
 /* Bootstrap reserva el hueco del switch con un margin-left negativo pensado
-   para su layout de bloque; en flex eso monta el switch sobre el texto anterior. */
+   para su layout de bloque, y le añade un margin-top pensado para alinear
+   con el texto en ese mismo layout de bloque; en flex ambos sobran y
+   desalinean el switch respecto a su etiqueta. */
 .switches-row .form-switch .form-check-input {
     margin-left: 0;
+    margin-top: 0;
 }
 
 .switches-row .form-check-label {
     margin: 0;
-    top: 0;
+    /* Ajuste óptico: el centro geométrico de la caja de línea del texto
+       queda un poco más alto que su masa visual, así que centrarla con
+       align-items no basta, hay que bajarla unos px a ojo. */
+    position: relative;
+    top: 2px;
 }
 
 body.dark-mode .switches-row {
